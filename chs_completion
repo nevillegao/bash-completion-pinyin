@@ -1,6 +1,6 @@
+# vim:ft=sh:
 
-_filedir()
-{
+_filedir() {
     local i IFS=$'\n' xspec
 
     _tilde "$cur" || return 0
@@ -9,7 +9,7 @@ _filedir()
     local quoted tmp
 
     _quote_readline_by_ref "$cur" quoted
-    toks=( $(
+    toks=($(
         compgen -d -- "$quoted" | {
             while read -r tmp; do
                 # TODO: I have removed a "[ -n $tmp ] &&" before 'printf ..',
@@ -26,12 +26,15 @@ _filedir()
         # Munge xspec to contain uppercase version too
         # http://thread.gmane.org/gmane.comp.shells.bash.bugs/15294/focus=15306
         xspec=${1:+"!*.@($1|${1^^})"}
-        toks+=( $( compgen -f -X "$xspec" -- $quoted ) )
+        toks+=($(compgen -f -X "$xspec" -- $quoted))
     fi
 
     # If the filter failed to produce anything, try without it if configured to
     [[ -n ${COMP_FILEDIR_FALLBACK:-} && \
-        -n "$1" && "$1" != -d && ${#toks[@]} -lt 1 ]] && \
+       -n "$1" && \
+       "$1" != -d && \
+       ${#toks[@]} -lt 1 \
+    ]] && \
         toks+=( $( compgen -f -- $quoted ) )
 
     if [[ ${#toks[@]} -ne 0 ]]; then
@@ -40,12 +43,11 @@ _filedir()
         COMPREPLY+=( "${toks[@]}" )
     fi
 
-	chs=($(chsdir "x$1" "$cur"))
+	chs=($("${PWD}/chsdir" "x$1" "$cur"))
 	COMPREPLY=( "${COMPREPLY[@]}" "${toks[@]}" "${chs[@]}" )
-} # _filedir()
+}
 
-_filedir_xspec()
-{
+_filedir_xspec() {
     local cur prev words cword
     _init_completion || return
 
@@ -86,9 +88,8 @@ _filedir_xspec()
         COMPREPLY=( "${toks[@]}" )
     fi
 
-    chs=($(chsdir "x$1" "$cur"))
+    chs=($("${PWD}/chsdir" "x$1" "$cur"))
     COMPREPLY=( "${toks[@]}" "${chs[@]}" )
 }
 
 complete -o filenames -F _filedir_xspec file
-
