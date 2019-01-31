@@ -43,7 +43,8 @@ _filedir() {
         COMPREPLY+=( "${toks[@]}" )
     fi
 
-	chs=($("${PWD}/chsdir" "x$1" "$cur"))
+    DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+	chs=($("${DIR}/chsdir" "x$1" "$cur"))
 	COMPREPLY=( "${COMPREPLY[@]}" "${toks[@]}" "${chs[@]}" )
 }
 
@@ -88,7 +89,8 @@ _filedir_xspec() {
         COMPREPLY=( "${toks[@]}" )
     fi
 
-    chs=($("${PWD}/chsdir" "x$1" "$cur"))
+    DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+    chs=($("${DIR}/chsdir" "x$1" "$cur"))
     COMPREPLY=( "${toks[@]}" "${chs[@]}" )
 }
 
